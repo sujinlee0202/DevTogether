@@ -12,5 +12,13 @@
 }
 
 body {
-  @apply m-0;
+  @apply m-0 w-full;
+}
+
+#root {
+  @apply w-full;
+}
+
+input {
+  @apply outline-none p-0 m-0;
 }
