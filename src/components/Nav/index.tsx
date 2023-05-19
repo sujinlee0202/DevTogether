@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AiOutlineHome, AiOutlineUser } from 'react-icons/ai';
 import { MdOutlineSpeakerNotes } from 'react-icons/md';
+import { Link } from 'react-router-dom';
 
 const Nav = () => {
   const [selectMenu, setSelectMenu] = useState('home');
@@ -28,7 +29,8 @@ const Nav = () => {
         <MdOutlineSpeakerNotes className="text-2xl" />
         <p className="text-xs">Q&A</p>
       </div>
-      <div
+      <Link
+        to="/login"
         className={`w-14 flex flex-col items-center ${
           selectMenu === 'login' && 'text-orange-500'
         }`}
@@ -36,7 +38,7 @@ const Nav = () => {
       >
         <AiOutlineUser className="text-2xl" />
         <p className="text-xs">로그인</p>
-      </div>
+      </Link>
     </nav>
   );
 };
