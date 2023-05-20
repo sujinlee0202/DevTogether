@@ -12,11 +12,11 @@
 }
 
 body {
-  @apply m-0 w-full;
+  @apply m-0 w-full h-full min-h-[100vh];
 }
 
 #root {
-  @apply w-full;
+  @apply w-full h-full min-h-[100vh] bg-gray-100;
 }
 
 input {

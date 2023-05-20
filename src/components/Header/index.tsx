@@ -14,7 +14,7 @@ const Header = () => {
   };
 
   return (
-    <header className="w-full h-14 border-b px-4 shadow-[0px_1px_24px_0px_rgba(0,0,0,0.1)]">
+    <header className="w-full h-14 border-b px-4 shadow-[0px_1px_24px_0px_rgba(0,0,0,0.1)] bg-white">
       <div className="w-full h-full max-w-screen-xl flex items-center mx-auto justify-between gap-4">
         <Link to="/" className="flex items-end shrink-0">
           <div className="font-bold text-xl mr-4 shrink-0">

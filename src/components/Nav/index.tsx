@@ -10,7 +10,7 @@ const Nav = () => {
   };
 
   return (
-    <nav className="absolute bottom-0 w-full h-14 flex items-center justify-between px-4 border-t shadow-[0px_-1px_24px_0px_rgba(0,0,0,0.1)] md:hidden">
+    <nav className="absolute bottom-0 w-full h-14 flex items-center justify-between px-4 border-t shadow-[0px_-1px_24px_0px_rgba(0,0,0,0.1)] md:hidden bg-white">
       <div
         className={`w-14 flex flex-col items-center ${
           selectMenu === 'home' && 'text-orange-500'
