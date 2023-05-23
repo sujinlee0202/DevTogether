@@ -1,20 +1,55 @@
-import { useState } from 'react';
+import { useRef } from 'react';
 import { AiOutlineArrowLeft } from 'react-icons/ai';
 import { Link } from 'react-router-dom';
-import CheckBox from '../../components/CheckBox';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import {
+  ERROR_MSG_EMAIL_PATTERN,
+  ERROR_MSG_MAX_LENGTH_20,
+  ERROR_MSG_MAX_LENGTH_30,
+  ERROR_MSG_MIN_LENGTH_6,
+  ERROR_MSG_PASSWORD_PATTERN,
+  ERROR_MSG_REQUIRED,
+  ERROR_MSG_VALIDATE,
+} from '../../utils/error-message';
+import Terms from '../../components/Terms';
+import { Inputs } from '../../types/signup';
 
+/**
+ * 회원가입 페이지
+ */
 const SignUp = () => {
-  const [active, setActive] = useState(false);
+  const {
+    handleSubmit,
+    watch,
+    register,
+    setValue,
+    formState: { errors, isValid },
+  } = useForm<Inputs>();
+
+  const passwordRef = useRef<string | null>(null);
+  passwordRef.current = watch('password');
+
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
+    console.log(data);
+    // backend로 회원가입 정보 보내기
+  };
 
   return (
     <section className="box-border w-full max-w-[640px] h-full min-h-[100vh] m-auto sm:border-r sm:border-l bg-white">
-      <div className="flex items-center text-xl gap-5 px-2 py-4 border-b">
+      {/** 뒤로가기 */}
+      <Link
+        to="/login"
+        className="flex items-center text-xl gap-5 px-2 py-4 border-b"
+      >
         <AiOutlineArrowLeft />
         <div className="font-bold">회원가입</div>
-      </div>
+      </Link>
+
+      {/** 회원가입 Container */}
       <div className="w-full px-12">
+        {/** 로그인 페이지로 이동 */}
         <div className="w-full p-4 bg-gray-200 rounded-lg my-4">
           <p className="text-center">
             이미 회원이신가요?
@@ -26,30 +61,94 @@ const SignUp = () => {
             </Link>
           </p>
         </div>
+
         {/** 회원가입 폼 */}
-        <form className="flex flex-col gap-2">
+        <form className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
           {/** input 입력 부분 */}
-          <Input text="프로필 이름" type="text" placeholder="프로필 이름" />
-          <Input text="이메일" type="text" placeholder="devvalue@gmail.com" />
+          <Input
+            text="프로필 이름"
+            type="text"
+            placeholder="프로필 이름"
+            register={register('name', {
+              required: ERROR_MSG_REQUIRED,
+              maxLength: {
+                value: 20,
+                message: ERROR_MSG_MAX_LENGTH_20,
+              },
+            })}
+            error={errors.name}
+          />
+          <Input
+            text="이메일"
+            type="email"
+            placeholder="devvalue@gmail.com"
+            register={register('email', {
+              required: ERROR_MSG_REQUIRED,
+              maxLength: {
+                value: 30,
+                message: ERROR_MSG_MAX_LENGTH_30,
+              },
+              pattern: {
+                value: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/,
+                message: ERROR_MSG_EMAIL_PATTERN,
+              },
+            })}
+            error={errors.email}
+          />
           <Input
             text="비밀번호"
             type="password"
             placeholder="영문, 숫자 포함 6자 이상"
+            register={register('password', {
+              required: ERROR_MSG_REQUIRED,
+              minLength: {
+                value: 6,
+                message: ERROR_MSG_MIN_LENGTH_6,
+              },
+              pattern: {
+                value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/,
+                message: ERROR_MSG_PASSWORD_PATTERN,
+              },
+            })}
+            error={errors.password}
           />
           <Input
             text="비밀번호 확인"
             type="password"
             placeholder="영문, 숫자 포함 6자 이상"
+            register={register('password_confirm', {
+              required: ERROR_MSG_REQUIRED,
+              minLength: {
+                value: 6,
+                message: ERROR_MSG_MIN_LENGTH_6,
+              },
+              pattern: {
+                value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/,
+                message: ERROR_MSG_PASSWORD_PATTERN,
+              },
+              validate: (value) => {
+                if (value === passwordRef.current) return true;
+                else if (value !== passwordRef.current)
+                  return ERROR_MSG_VALIDATE;
+              },
+            })}
+            error={
+              watch('password') !== watch('password_confirm')
+                ? errors.password_confirm
+                : undefined
+            }
           />
+
           {/** 이용 약관 */}
-          <div className="flex flex-col my-2 gap-2">
-            <CheckBox text="모두 동의" />
-            <CheckBox text="(필수) 만 14세 이상입니다." />
-            <CheckBox text="(필수) 개발가치 이용약관 동의" />
-            <CheckBox text="(필수) 개발가치 개인정보 수집 · 이용 동의" />
-            <CheckBox text="(선택) 마케팅 정보 수신 동의" />
-          </div>
-          <Button active={active} text="회원가입 하기" />
+          <Terms
+            register={register}
+            errors={errors}
+            watch={watch}
+            setValue={setValue}
+          />
+
+          {/** 회원가입 버튼 */}
+          <Button active={isValid} text="회원가입 하기" />
         </form>
       </div>
     </section>
