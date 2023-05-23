@@ -26,7 +26,9 @@ const SignUp = () => {
     register,
     setValue,
     formState: { errors, isValid },
-  } = useForm<Inputs>();
+  } = useForm<Inputs>({
+    mode: 'onChange',
+  });
 
   const passwordRef = useRef<string | null>(null);
   passwordRef.current = watch('password');
@@ -70,7 +72,10 @@ const SignUp = () => {
             type="text"
             placeholder="프로필 이름"
             register={register('name', {
-              required: ERROR_MSG_REQUIRED,
+              required: {
+                value: true,
+                message: ERROR_MSG_REQUIRED,
+              },
               maxLength: {
                 value: 20,
                 message: ERROR_MSG_MAX_LENGTH_20,
@@ -83,7 +88,10 @@ const SignUp = () => {
             type="email"
             placeholder="devvalue@gmail.com"
             register={register('email', {
-              required: ERROR_MSG_REQUIRED,
+              required: {
+                value: true,
+                message: ERROR_MSG_REQUIRED,
+              },
               maxLength: {
                 value: 30,
                 message: ERROR_MSG_MAX_LENGTH_30,
@@ -134,7 +142,9 @@ const SignUp = () => {
             })}
             error={
               watch('password') !== watch('password_confirm')
-                ? errors.password_confirm
+                ? isValid
+                  ? undefined
+                  : errors.password_confirm
                 : undefined
             }
           />
