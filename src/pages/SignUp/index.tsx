@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { AiOutlineArrowLeft } from 'react-icons/ai';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -15,6 +15,10 @@ import {
 } from '../../utils/error-message';
 import Terms from '../../components/Terms';
 import { Inputs } from '../../types/signup';
+import { setSignUp } from '../../api/firebase';
+import { Timestamp } from 'firebase/firestore';
+import { v4 as uuidv4 } from 'uuid';
+import gravatar from 'gravatar';
 
 /**
  * 회원가입 페이지
@@ -32,10 +36,25 @@ const SignUp = () => {
 
   const passwordRef = useRef<string | null>(null);
   passwordRef.current = watch('password');
+  const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    console.log(data);
     // backend로 회원가입 정보 보내기
+    setSignUp({
+      uid: uuidv4(),
+      name: data.name,
+      email: data.email,
+      password: data.password,
+      profileImage: gravatar.url(data.name, { s: '28px', d: 'retro' }),
+      signupDate: Timestamp.fromDate(new Date()),
+      loginDate: Timestamp.fromDate(new Date()),
+      logoutDate: Timestamp.fromDate(new Date()),
+      marketing_agree: !!data.marketing,
+      age_agree: !!data.age,
+      privacy_agree: !!data.privacy,
+      terms_of_use_agree: !!data.terms_of_use,
+    });
+    navigate('/login');
   };
 
   return (
