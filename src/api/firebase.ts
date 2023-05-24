@@ -19,19 +19,5 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 export const setSignUp = async (user: User) => {
-  console.log('firebase', user);
-  await addDoc(collection(db, 'user'), {
-    uid: user.uid,
-    name: user.name,
-    email: user.email,
-    password: user.password,
-    profileImage: user.profileImage,
-    signupDate: user.signupDate,
-    loginDate: user.loginDate,
-    logoutDate: user.logoutDate,
-    marketing_agree: user.marketing_agree,
-    age_agree: user.age_agree,
-    privacy_agree: user.privacy_agree,
-    terms_of_use_agree: user.terms_of_use_agree,
-  });
+  await addDoc(collection(db, 'user'), user);
 };
