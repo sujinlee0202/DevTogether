@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { AiOutlineArrowLeft } from 'react-icons/ai';
 import { Link, useNavigate } from 'react-router-dom';
 import Input from '../../components/Input';
@@ -6,6 +6,7 @@ import Button from '../../components/Button';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import {
   ERROR_MSG_EMAIL_PATTERN,
+  ERROR_MSG_LOGIN_ALREADY_USER,
   ERROR_MSG_MAX_LENGTH_20,
   ERROR_MSG_MAX_LENGTH_30,
   ERROR_MSG_MIN_LENGTH_6,
@@ -15,9 +16,8 @@ import {
 } from '../../utils/error-message';
 import Terms from '../../components/Terms';
 import { Inputs } from '../../types/signup';
-import { setSignUp } from '../../api/firebase';
+import { setSignUp, setUser } from '../../api/firebase';
 import { Timestamp } from 'firebase/firestore';
-import { v4 as uuidv4 } from 'uuid';
 import gravatar from 'gravatar';
 
 /**
@@ -38,23 +38,30 @@ const SignUp = () => {
   passwordRef.current = watch('password');
   const navigate = useNavigate();
 
+  const [alreadyUser, setAlreadyUser] = useState(false);
+
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     // backend로 회원가입 정보 보내기
-    setSignUp({
-      uid: uuidv4(),
-      name: data.name,
-      email: data.email,
-      password: data.password,
-      profileImage: gravatar.url(data.name, { s: '28px', d: 'retro' }),
-      signupDate: Timestamp.fromDate(new Date()),
-      loginDate: Timestamp.fromDate(new Date()),
-      logoutDate: Timestamp.fromDate(new Date()),
-      marketing_agree: !!data.marketing,
-      age_agree: !!data.age,
-      privacy_agree: !!data.privacy,
-      terms_of_use_agree: !!data.terms_of_use,
-    });
-    navigate('/login');
+    setSignUp(data.email, data.password)
+      .then((user) => {
+        setUser({
+          uid: user.uid,
+          name: data.name,
+          email: data.email,
+          password: '',
+          profileImage: gravatar.url(data.name, { s: '28px', d: 'retro' }),
+          signupDate: Timestamp.fromDate(new Date()),
+          marketing_agree: !!data.marketing,
+          age_agree: !!data.age,
+          privacy_agree: !!data.privacy,
+          terms_of_use_agree: !!data.terms_of_use,
+        });
+        navigate('/login');
+      })
+      .catch((error) => {
+        if (error.code === 'auth/email-already-in-use') setAlreadyUser(true);
+        else setAlreadyUser(false);
+      });
   };
 
   return (
@@ -175,7 +182,9 @@ const SignUp = () => {
             watch={watch}
             setValue={setValue}
           />
-
+          <div className="text-red-600 text-center">
+            {alreadyUser && ERROR_MSG_LOGIN_ALREADY_USER}
+          </div>
           {/** 회원가입 버튼 */}
           <Button active={isValid} text="회원가입 하기" />
         </form>
