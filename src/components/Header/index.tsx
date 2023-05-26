@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { BiSearch } from 'react-icons/bi';
 import { HiOutlineChatBubbleOvalLeftEllipsis } from 'react-icons/hi2';
 import { Link } from 'react-router-dom';
+import { loginContext } from '../../context/loginContext';
+import { logout } from '../../api/firebase';
 
 const Header = () => {
+  const { setUser } = useContext(loginContext);
   const [search, setSearch] = useState('');
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -12,6 +15,19 @@ const Header = () => {
   const handleInput = (e: any) => {
     setSearch(e.target.value);
   };
+
+  // 임시 로그아웃 코드
+  const handleLogout = () => {
+    logout().then(() => {
+      setUser && setUser(null);
+      sessionStorage.removeItem('user');
+    });
+  };
+
+  const sessionUser = sessionStorage.getItem('user');
+  const object = sessionUser && JSON.parse(sessionUser);
+
+  const profileImage = object && object.dbUser.profileImage;
 
   return (
     <header className="w-full h-14 border-b px-4 shadow-[0px_1px_24px_0px_rgba(0,0,0,0.1)] bg-white">
@@ -41,17 +57,27 @@ const Header = () => {
         <button className="md:hidden w-6 h-6 flex items-center justify-center shrink-0">
           <HiOutlineChatBubbleOvalLeftEllipsis className="text-2xl" />
         </button>
-        <div className="hidden md:flex items-center gap-2 shrink-0">
-          <Link to="/login" className="border py-1 px-2 rounded-xl text-sm">
-            로그인
-          </Link>
-          <Link
-            to="/signup"
-            className="border py-1 px-2 rounded-xl text-sm bg-orange-400 text-white font-bold"
+        {sessionUser ? (
+          <div
+            onClick={handleLogout}
+            className="hidden md:flex shrink-0 gap-2 items-center"
           >
-            회원가입
-          </Link>
-        </div>
+            <HiOutlineChatBubbleOvalLeftEllipsis className="text-2xl" />
+            <img src={profileImage} className="w-8 h-8 rounded-full"></img>
+          </div>
+        ) : (
+          <div className="hidden md:flex items-center gap-2 shrink-0">
+            <Link to="/login" className="border py-1 px-2 rounded-xl text-sm">
+              로그인
+            </Link>
+            <Link
+              to="/signup"
+              className="border py-1 px-2 rounded-xl text-sm bg-orange-400 text-white font-bold"
+            >
+              회원가입
+            </Link>
+          </div>
+        )}
       </div>
     </header>
   );

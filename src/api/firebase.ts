@@ -8,7 +8,13 @@ import {
   getDoc,
 } from 'firebase/firestore';
 import { User } from '../types/user';
-import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut,
+} from 'firebase/auth';
 import { Inputs } from '../types/signup';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -49,4 +55,22 @@ export const setSignUp = async (email: string, password: string) => {
       return userCredential.user;
     },
   );
+};
+
+export const login = async (email: string, password: string) => {
+  return await signInWithEmailAndPassword(auth, email, password).then(
+    (userCredential) => {
+      return userCredential.user;
+    },
+  );
+};
+
+export const onAuthStateChange = (callback: (user: any | null) => void) => {
+  onAuthStateChanged(auth, async (user) => {
+    callback(user);
+  });
+};
+
+export const logout = async () => {
+  return signOut(auth).then(() => {});
 };

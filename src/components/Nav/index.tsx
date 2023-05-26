@@ -9,6 +9,11 @@ const Nav = () => {
     setSelectMenu(menu);
   };
 
+  const sessionUser = sessionStorage.getItem('user');
+  const object = sessionUser && JSON.parse(sessionUser);
+
+  const profileImage = object && object.dbUser.profileImage;
+
   return (
     <nav className="absolute bottom-0 w-full h-14 flex items-center justify-between px-4 border-t shadow-[0px_-1px_24px_0px_rgba(0,0,0,0.1)] md:hidden bg-white">
       <div
@@ -29,16 +34,21 @@ const Nav = () => {
         <MdOutlineSpeakerNotes className="text-2xl" />
         <p className="text-xs">Q&A</p>
       </div>
-      <Link
-        to="/login"
-        className={`w-14 flex flex-col items-center ${
-          selectMenu === 'login' && 'text-orange-500'
-        }`}
-        onClick={() => handleClickMenu('login')}
-      >
-        <AiOutlineUser className="text-2xl" />
-        <p className="text-xs">로그인</p>
-      </Link>
+      {sessionUser && (
+        <img src={profileImage} className="w-8 h-8 rounded-full" />
+      )}
+      {!sessionUser && (
+        <Link
+          to="/login"
+          className={`w-14 flex flex-col items-center ${
+            selectMenu === 'login' && 'text-orange-500'
+          }`}
+          onClick={() => handleClickMenu('login')}
+        >
+          <AiOutlineUser className="text-2xl" />
+          <p className="text-xs">로그인</p>
+        </Link>
+      )}
     </nav>
   );
 };
