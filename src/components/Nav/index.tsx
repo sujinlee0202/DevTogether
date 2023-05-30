@@ -5,16 +5,12 @@ import { Link } from 'react-router-dom';
 import { loginContext } from '../../context/loginContext';
 
 const Nav = () => {
-  const {} = useContext(loginContext);
+  const { profileImage } = useContext(loginContext);
 
   const [selectMenu, setSelectMenu] = useState('home');
   const handleClickMenu = (menu: string) => {
     setSelectMenu(menu);
   };
-
-  const sessionUser = sessionStorage.getItem('user');
-  const object = sessionUser && JSON.parse(sessionUser);
-  const profileImage = object && object.dbUser.profileImage;
 
   return (
     <nav className="absolute bottom-0 w-full h-14 flex items-center justify-between px-4 border-t shadow-[0px_-1px_24px_0px_rgba(0,0,0,0.1)] md:hidden bg-white">
@@ -36,10 +32,10 @@ const Nav = () => {
         <MdOutlineSpeakerNotes className="text-2xl" />
         <p className="text-xs">Q&A</p>
       </div>
-      {sessionUser && (
+      {profileImage && (
         <img src={profileImage} className="w-8 h-8 rounded-full" />
       )}
-      {!sessionUser && (
+      {!profileImage && (
         <Link
           to="/login"
           className={`w-14 flex flex-col items-center ${

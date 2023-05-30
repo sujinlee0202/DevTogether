@@ -6,7 +6,7 @@ import { loginContext } from '../../context/loginContext';
 import Modal from '../Modal';
 
 const Header = () => {
-  const {} = useContext(loginContext);
+  const { profileImage } = useContext(loginContext);
   const [search, setSearch] = useState('');
   const [openModal, setOpenModal] = useState(false);
   const handleSubmit = (e: React.FormEvent) => {
@@ -20,10 +20,6 @@ const Header = () => {
   const handleOpenModal = () => {
     setOpenModal((prev) => !prev);
   };
-
-  const sessionUser = sessionStorage.getItem('user');
-  const object = sessionUser && JSON.parse(sessionUser);
-  const profileImage = object && object.dbUser.profileImage;
 
   return (
     <header className="w-full h-14 border-b px-4 shadow-[0px_1px_24px_0px_rgba(0,0,0,0.1)] bg-white">
@@ -53,7 +49,7 @@ const Header = () => {
         <button className="md:hidden w-6 h-6 flex items-center justify-center shrink-0">
           <HiOutlineChatBubbleOvalLeftEllipsis className="text-2xl" />
         </button>
-        {sessionUser ? (
+        {profileImage ? (
           <div
             onClick={handleOpenModal}
             className="relative hidden md:flex shrink-0 gap-2 items-center"
