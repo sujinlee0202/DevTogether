@@ -3,11 +3,12 @@ import { BiSearch } from 'react-icons/bi';
 import { HiOutlineChatBubbleOvalLeftEllipsis } from 'react-icons/hi2';
 import { Link } from 'react-router-dom';
 import { loginContext } from '../../context/loginContext';
-import { logout } from '../../api/firebase';
+import Modal from '../Modal';
 
 const Header = () => {
-  const { setUser } = useContext(loginContext);
+  const {} = useContext(loginContext);
   const [search, setSearch] = useState('');
+  const [openModal, setOpenModal] = useState(false);
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
   };
@@ -16,17 +17,12 @@ const Header = () => {
     setSearch(e.target.value);
   };
 
-  // 임시 로그아웃 코드
-  const handleLogout = () => {
-    logout().then(() => {
-      setUser && setUser(null);
-      sessionStorage.removeItem('user');
-    });
+  const handleOpenModal = () => {
+    setOpenModal((prev) => !prev);
   };
 
   const sessionUser = sessionStorage.getItem('user');
   const object = sessionUser && JSON.parse(sessionUser);
-
   const profileImage = object && object.dbUser.profileImage;
 
   return (
@@ -59,11 +55,14 @@ const Header = () => {
         </button>
         {sessionUser ? (
           <div
-            onClick={handleLogout}
-            className="hidden md:flex shrink-0 gap-2 items-center"
+            onClick={handleOpenModal}
+            className="relative hidden md:flex shrink-0 gap-2 items-center"
           >
             <HiOutlineChatBubbleOvalLeftEllipsis className="text-2xl" />
             <img src={profileImage} className="w-8 h-8 rounded-full"></img>
+
+            {/** 모달 */}
+            {openModal && <Modal />}
           </div>
         ) : (
           <div className="hidden md:flex items-center gap-2 shrink-0">

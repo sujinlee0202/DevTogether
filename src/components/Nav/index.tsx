@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { AiOutlineHome, AiOutlineUser } from 'react-icons/ai';
 import { MdOutlineSpeakerNotes } from 'react-icons/md';
 import { Link } from 'react-router-dom';
+import { loginContext } from '../../context/loginContext';
 
 const Nav = () => {
+  const {} = useContext(loginContext);
+
   const [selectMenu, setSelectMenu] = useState('home');
   const handleClickMenu = (menu: string) => {
     setSelectMenu(menu);
@@ -11,7 +14,6 @@ const Nav = () => {
 
   const sessionUser = sessionStorage.getItem('user');
   const object = sessionUser && JSON.parse(sessionUser);
-
   const profileImage = object && object.dbUser.profileImage;
 
   return (

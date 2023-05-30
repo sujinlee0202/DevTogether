@@ -65,7 +65,7 @@ export const login = async (email: string, password: string) => {
   );
 };
 
-export const onAuthStateChange = (callback: (user: any | null) => void) => {
+export const onAuthStateChange = (callback: (user: any) => void) => {
   onAuthStateChanged(auth, async (user) => {
     callback(user);
   });
