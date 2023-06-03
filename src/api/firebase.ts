@@ -6,6 +6,7 @@ import {
   setDoc,
   doc,
   getDoc,
+  getDocs,
 } from 'firebase/firestore';
 import { User } from '../types/user';
 import {
@@ -16,6 +17,7 @@ import {
   signOut,
 } from 'firebase/auth';
 import { Inputs } from '../types/signup';
+import { Post } from '../types/post';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -73,4 +75,27 @@ export const onAuthStateChange = (callback: (user: any) => void) => {
 
 export const logout = async () => {
   return signOut(auth).then(() => {});
+};
+
+export const setPost = async (post: Post) => {
+  const userRef = collection(db, 'post');
+  await setDoc(doc(userRef, post.postid), post);
+};
+
+export const getPost = async () => {
+  const postSnap = await getDocs(collection(db, 'post'));
+  const postData: Post[] = [];
+  postSnap.forEach((doc) => {
+    postData.push(doc.data() as Post);
+  });
+  return postData;
+};
+
+export const getComment = async (id: string) => {
+  const commentSnap = await getDocs(collection(db, `/post/${id}/comment`));
+  const commentData: Comment[] = [];
+  commentSnap.forEach((doc) => {
+    commentData.push(doc.data() as Comment);
+  });
+  return commentData;
 };
