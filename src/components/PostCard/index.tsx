@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Post, Comment } from '../../types/post';
-import { getComment, getUser } from '../../api/firebase';
+import { getComment, getUser, setPost } from '../../api/firebase';
 import { User } from '../../types/user';
-import { Timestamp } from 'firebase/firestore';
-import { AiOutlineHeart } from 'react-icons/ai';
+import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 import { formattedDate } from '../../utils/formattedDate';
 
 interface Props {
@@ -27,6 +26,10 @@ const PostCard = ({ post }: Props) => {
     getComment(post.postid).then((data: any) => setComment(data));
   }, []);
 
+  const handleLike = () => {
+    setLike((prev) => !prev);
+  };
+
   return (
     <article className="w-full bg-white border flex flex-col p-4 gap-3">
       <div className="flex items-center gap-3">
@@ -41,11 +44,16 @@ const PostCard = ({ post }: Props) => {
         </div>
       </div>
       <p className="font-bold text-xl">{post.title}</p>
-      <pre className="whitespace-nowrap font-sans">{post.article}</pre>
+      <pre className="whitespace-pre-wrap font-sans">{post.article}</pre>
       <div
         className={`flex items-center gap-1 text-sm ${like && 'text-blue-600'}`}
+        onClick={handleLike}
       >
-        <AiOutlineHeart className="w-4 h-4" />
+        {like ? (
+          <AiFillHeart className="w-4 h-4" />
+        ) : (
+          <AiOutlineHeart className="w-4 h-4" />
+        )}
         <p>좋아요</p>
       </div>
       <div className="flex items-center text-sm gap-1">
