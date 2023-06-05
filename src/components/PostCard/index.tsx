@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Post, Comment } from '../../types/post';
 import { getComment, getUser, setPost } from '../../api/firebase';
 import { User } from '../../types/user';
@@ -13,6 +13,8 @@ const PostCard = ({ post }: Props) => {
   const [user, setUser] = useState<User>();
   const [comment, setComment] = useState<Comment[]>();
   const [like, setLike] = useState(false);
+  const [more, setMore] = useState(false);
+  const preRef = useRef(null);
 
   useEffect(() => {
     if (post.email) {
@@ -30,6 +32,23 @@ const PostCard = ({ post }: Props) => {
     setLike((prev) => !prev);
   };
 
+  const handleMore = () => {
+    setMore((prev) => !prev);
+  };
+
+  const limitTextLines = (text: string, line: number) => {
+    const lines = text.split('\n');
+    if (lines.length <= line) {
+      return text;
+    }
+    return lines.slice(0, line).join('\n');
+  };
+
+  const showMoreButton = (text: string, line: number) => {
+    const lines = text.split('\n');
+    return lines.length > line;
+  };
+
   return (
     <article className="w-full bg-white border flex flex-col p-4 gap-3">
       <div className="flex items-center gap-3">
@@ -44,7 +63,17 @@ const PostCard = ({ post }: Props) => {
         </div>
       </div>
       <p className="font-bold text-xl">{post.title}</p>
-      <pre className="whitespace-pre-wrap font-sans">{post.article}</pre>
+      <pre className={`relative whitespace-pre-wrap font-sans`} ref={preRef}>
+        {more ? post.article : limitTextLines(post.article, 4)}
+        {!more && showMoreButton(post.article, 4) && (
+          <button
+            className="buttom-0 left-0 text-gray-500"
+            onClick={handleMore}
+          >
+            ...더보기
+          </button>
+        )}
+      </pre>
       <div
         className={`flex items-center gap-1 text-sm ${like && 'text-blue-600'}`}
         onClick={handleLike}
