@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { Post, Comment } from '../../types/post';
-import { getComment, getUser, setPost } from '../../api/firebase';
+import { getComment, getUser } from '../../api/firebase';
 import { User } from '../../types/user';
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 import { formattedDate } from '../../utils/formattedDate';
