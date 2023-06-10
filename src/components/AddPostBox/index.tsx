@@ -8,7 +8,7 @@ const AddPostBox = () => {
   return (
     <Link
       to="/addpost"
-      className="w-full mt-10 bg-white border p-4 flex items-center gap-4"
+      className="w-full my-10 bg-white border p-4 flex items-center gap-4"
     >
       <img
         src={profileImage}

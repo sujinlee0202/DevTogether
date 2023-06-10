@@ -5,7 +5,7 @@ export type Post = {
   article: string;
   email: string;
   postid: string;
-  like: number;
+  like: Like[];
   comment: string[];
   date: Timestamp;
 };
@@ -15,4 +15,10 @@ export type Comment = {
   count: number;
   email: string;
   name: string;
+};
+
+export type Like = {
+  email: string;
+  name: string;
+  profileImage: string;
 };

@@ -1,4 +1,4 @@
-// Import the functions you need from the SDKs you need
+import { Like } from './../types/post';
 import { initializeApp } from 'firebase/app';
 import {
   getFirestore,
@@ -7,6 +7,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  deleteDoc,
 } from 'firebase/firestore';
 import { User } from '../types/user';
 import {
@@ -98,4 +99,31 @@ export const getComment = async (id: string) => {
     commentData.push(doc.data() as Comment);
   });
   return commentData;
+};
+
+export const setFBLike = async (
+  postId: string,
+  email: string,
+  name: string,
+  profileImage: string,
+) => {
+  const likeRef = collection(db, `post/${postId}/like`);
+  await setDoc(doc(likeRef, email), {
+    email,
+    name,
+    profileImage,
+  });
+};
+
+export const getFBLike = async (postId: string) => {
+  const likeSnap = await getDocs(collection(db, `/post/${postId}/like`));
+  const likeData: Like[] = [];
+  likeSnap.forEach((doc) => {
+    likeData.push(doc.data() as Like);
+  });
+  return likeData;
+};
+
+export const deleteFBLike = async (postId: string, email: string) => {
+  await deleteDoc(doc(db, `post/${postId}/like`, email));
 };
