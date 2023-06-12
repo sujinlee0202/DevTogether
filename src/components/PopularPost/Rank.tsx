@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Post } from '../../types/post';
 import { getUser } from '../../api/firebase';
+
 interface Props {
   data: Post;
   rank: number;
@@ -11,7 +12,7 @@ const Rank = ({ data, rank }: Props) => {
 
   useEffect(() => {
     getUser(data.email).then((user: any) => setProfileImage(user.profileImage));
-  }, [data.email]);
+  }, [data]);
 
   return (
     <div

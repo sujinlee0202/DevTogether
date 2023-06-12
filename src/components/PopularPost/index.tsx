@@ -1,14 +1,21 @@
 import { useEffect, useState } from 'react';
 import { Post } from '../../types/post';
-import { getFBLike } from '../../api/firebase';
+import { getFBLike, getPost } from '../../api/firebase';
 import Rank from './Rank';
+import { useQuery } from '@tanstack/react-query';
 
-interface Props {
-  posts: Post[];
-}
-
-const PopularPost = ({ posts }: Props) => {
+const PopularPost = () => {
   const [sortedPosts, setSortedPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const { data: PostData } = useQuery({
+    queryKey: ['post'],
+    queryFn: () => getPost(),
+    staleTime: 1000 * 60 * 5,
+  });
+
+  useEffect(() => {
+    if (PostData) setPosts(PostData);
+  }, [PostData]);
 
   useEffect(() => {
     const getSortedPosts = async () => {
