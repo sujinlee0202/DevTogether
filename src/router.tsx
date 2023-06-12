@@ -3,11 +3,23 @@ import Home from './pages/Home';
 import LogIn from './pages/Login';
 import SignUp from './pages/SignUp';
 import AddPostPage from './pages/AddPost';
+import Timeline from './components/Timeline';
+import PostDetail from './pages/PostDetail';
 
 const routerData: RouteObject[] = [
   {
     path: '/',
     element: <Home />,
+    children: [
+      {
+        path: '/',
+        element: <Timeline />,
+      },
+      {
+        path: '/article/:id',
+        element: <PostDetail />,
+      },
+    ],
   },
   {
     path: '/login',
@@ -28,6 +40,7 @@ export const routers = createBrowserRouter(
     return {
       path: router.path,
       element: router.element,
+      children: router.children,
     };
   }),
 );
