@@ -27,6 +27,7 @@ const AddPostPage = () => {
         email: user.email,
         postid: uuidv4(),
         date: Timestamp.fromDate(new Date()),
+        name: user.dbUser.name,
         like: [],
         comment: [],
       }).then(() => navigate('/'));
