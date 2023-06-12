@@ -46,7 +46,8 @@ const PostCard = ({ post }: Props) => {
 
   // login user가 like data안에 있을 때
   useEffect(() => {
-    if (likeData?.map((data) => data.email)[0] === user?.email) {
+    if (!user) return;
+    if (likeData?.map((data) => data.email).includes(user?.email)) {
       setIsLike(true);
     }
   }, [likeData]);
@@ -64,7 +65,7 @@ const PostCard = ({ post }: Props) => {
     setIsLike((prev) => !prev);
 
     // query 데이터를 최신 상태로 업데이트
-    client.invalidateQueries();
+    client.invalidateQueries(); //
     if (isLike) {
       if (user) {
         deleteFBLike(post.postid, user.email);

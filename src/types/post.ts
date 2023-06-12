@@ -8,6 +8,7 @@ export type Post = {
   like: Like[];
   comment: string[];
   date: Timestamp;
+  name: string;
 };
 
 export type Comment = {
