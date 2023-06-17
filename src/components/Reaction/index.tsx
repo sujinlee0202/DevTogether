@@ -6,7 +6,7 @@ import LikeModal from '../LikeModal';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   deleteFBLike,
-  getComment,
+  getFBComment,
   getFBLike,
   setFBLike,
 } from '../../api/firebase';
@@ -23,12 +23,17 @@ const Reaction = ({ user, post, mode }: Props) => {
   const [openModal, setOpenModal] = useState(false);
   const [likeData, setLikeData] = useState<Like[]>();
   const [isLike, setIsLike] = useState(false);
-  const [comment, setComment] = useState<Comment[]>();
 
   const { data: likeQueryData } = useQuery({
     queryKey: ['like', post.postid],
     queryFn: () => getFBLike(post.postid),
     staleTime: 1000 * 60,
+  });
+
+  const { data: commentData } = useQuery({
+    queryKey: ['comment', post.postid],
+    queryFn: async () => getFBComment(post.postid),
+    staleTime: 1000 * 60 * 5,
   });
 
   // login user가 like data안에 있을 때
@@ -43,10 +48,6 @@ const Reaction = ({ user, post, mode }: Props) => {
   useEffect(() => {
     if (likeQueryData) setLikeData(likeQueryData);
   }, [likeQueryData]);
-
-  useEffect(() => {
-    getComment(post.postid).then((data: any) => setComment(data));
-  }, []);
 
   const client = useQueryClient();
   const navigate = useNavigate();
@@ -103,9 +104,12 @@ const Reaction = ({ user, post, mode }: Props) => {
           <p className="mr-2">{likeQueryData?.length}</p>
         </div>
         {mode === 'timeline' && (
-          <div className="flex items-center gap-1 cursor-pointer">
-            <p onClick={handleMoveDetail}>댓글</p>
-            <p>{comment?.length}</p>
+          <div
+            className="flex items-center gap-1 cursor-pointer"
+            onClick={handleMoveDetail}
+          >
+            <p>댓글</p>
+            <p>{commentData?.length}</p>
           </div>
         )}
       </div>

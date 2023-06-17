@@ -8,6 +8,7 @@ import {
   getDoc,
   getDocs,
   deleteDoc,
+  Timestamp,
 } from 'firebase/firestore';
 import { User } from '../types/user';
 import {
@@ -19,6 +20,8 @@ import {
 } from 'firebase/auth';
 import { Inputs } from '../types/signup';
 import { Post } from '../types/post';
+import { v4 as uuidv4 } from 'uuid';
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -92,13 +95,31 @@ export const getPost = async () => {
   return postData;
 };
 
-export const getComment = async (id: string) => {
-  const commentSnap = await getDocs(collection(db, `/post/${id}/comment`));
+export const getFBComment = async (postId: string) => {
+  const commentSnap = await getDocs(collection(db, `/post/${postId}/comment`));
   const commentData: Comment[] = [];
   commentSnap.forEach((doc) => {
     commentData.push(doc.data() as Comment);
   });
   return commentData;
+};
+
+export const setFBComment = async (data: {
+  postId: string;
+  email: string;
+  profileImage: string;
+  comment: string;
+  name: string;
+  date: Timestamp;
+}) => {
+  const commentRef = collection(db, `post/${data.postId}/comment`);
+  await setDoc(doc(commentRef, uuidv4()), {
+    email: data.email,
+    profileImage: data.profileImage,
+    comment: data.comment,
+    name: data.name,
+    date: data.date,
+  });
 };
 
 export const setFBLike = async (

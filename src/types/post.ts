@@ -13,9 +13,11 @@ export type Post = {
 
 export type Comment = {
   comment: string;
-  count: number;
   email: string;
+  profileImage: string;
   name: string;
+  date: Timestamp;
+  postId?: string | undefined;
 };
 
 export type Like = {
