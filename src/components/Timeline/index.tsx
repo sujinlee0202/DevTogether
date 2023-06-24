@@ -3,6 +3,7 @@ import { Post } from '../../types/post';
 import AddPostBox from '../AddPostBox';
 import PostCard from '../PostCard';
 import { getPost } from '../../api/firebase';
+import AddPostButton from '../AddPostButton';
 
 const Timeline = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -21,6 +22,7 @@ const Timeline = () => {
         .map((post) => (
           <PostCard key={post.postid} post={post} />
         ))}
+      <AddPostButton />
     </section>
   );
 };

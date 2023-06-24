@@ -5,6 +5,7 @@ import SignUp from './pages/SignUp';
 import AddPostPage from './pages/AddPost';
 import Timeline from './components/Timeline';
 import PostDetail from './pages/PostDetail';
+import ChatPage from './pages/ChatPage';
 
 const routerData: RouteObject[] = [
   {
@@ -18,6 +19,10 @@ const routerData: RouteObject[] = [
       {
         path: '/article/:id',
         element: <PostDetail />,
+      },
+      {
+        path: '/chat',
+        element: <ChatPage />,
       },
     ],
   },

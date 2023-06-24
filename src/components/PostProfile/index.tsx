@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { User } from '../../types/user';
 
 interface Props {
@@ -6,8 +7,16 @@ interface Props {
 }
 
 const PostProfile = ({ postUser, date }: Props) => {
+  const navigate = useNavigate();
+
+  const handleMoveChat = () => {
+    navigate('/chat', {
+      state: postUser,
+    });
+  };
+
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-3" onClick={handleMoveChat}>
       <img
         src={postUser && postUser.profileImage}
         alt="user"
