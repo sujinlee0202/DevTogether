@@ -1,12 +1,12 @@
 import { Timestamp } from 'firebase/firestore';
 
 export type User = {
-  dbUser: any;
+  dbUser?: any;
   uid: string;
   name: string;
   email: string;
   password: string;
-  profileImage?: string;
+  profileImage: string;
   signupDate: Timestamp;
   loginDate?: Timestamp;
   logoutDate?: Timestamp;

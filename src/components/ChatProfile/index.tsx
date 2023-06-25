@@ -5,7 +5,6 @@ interface Props {
 }
 
 const ChatProfile = ({ receiveUser }: Props) => {
-  console.log(receiveUser);
   return (
     <div className="w-full h-14 border-b flex items-center gap-3 pl-3">
       <img src={receiveUser.profileImage} className="rounded-full"></img>

@@ -21,6 +21,7 @@ import {
 import { Inputs } from '../types/signup';
 import { Post } from '../types/post';
 import { v4 as uuidv4 } from 'uuid';
+import { Chat } from '../types/chat';
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -147,4 +148,58 @@ export const getFBLike = async (postId: string) => {
 
 export const deleteFBLike = async (postId: string, email: string) => {
   await deleteDoc(doc(db, `post/${postId}/like`, email));
+};
+
+export const setFBChat = async (
+  chat: string,
+  receiveEmail: string,
+  receiveName: string,
+  receiveImage: string,
+  sendName: string,
+  sendEmail: string,
+  sendImage: string,
+  date: Timestamp,
+) => {
+  const chatSendRef = collection(
+    db,
+    `chat/${sendEmail}/channel/${receiveEmail}/message`,
+  );
+
+  const chatReceiveRef = collection(
+    db,
+    `chat/${receiveEmail}/channel/${sendEmail}/message`,
+  );
+
+  await setDoc(doc(chatSendRef), {
+    chat,
+    receiveName,
+    receiveEmail,
+    receiveImage,
+    sendName,
+    sendEmail,
+    sendImage,
+    date,
+  });
+
+  await setDoc(doc(chatReceiveRef), {
+    chat,
+    receiveName,
+    receiveEmail,
+    receiveImage,
+    sendName,
+    sendEmail,
+    sendImage,
+    date,
+  });
+};
+
+export const getFBChat = async (sendEmail: string, receiveEmail: string) => {
+  const chatSnap = await getDocs(
+    collection(db, `/chat/${sendEmail}/channel/${receiveEmail}/message`),
+  );
+  const chatData: Chat[] = [];
+  chatSnap.forEach((doc) => {
+    chatData.push(doc.data() as Chat);
+  });
+  return chatData;
 };

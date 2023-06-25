@@ -5,7 +5,6 @@ interface Props {
 }
 
 const CommentBox = ({ comment }: Props) => {
-  console.log('comment', comment);
   return (
     <div className="bg-white flex flex-col text-sm">
       {comment &&

@@ -1,13 +1,44 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { loginContext } from '../../context/loginContext';
 import { useLocation } from 'react-router-dom';
 import ChatProfile from '../../components/ChatProfile';
 import { useForm } from 'react-hook-form';
+import { getFBChat, setFBChat } from '../../api/firebase';
+import { Timestamp } from 'firebase/firestore';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { Chat } from '../../types/chat';
 
 const ChatPage = () => {
   const { user } = useContext(loginContext);
   const location = useLocation();
-  const { name, profileImage } = location.state;
+  const { name, profileImage, email } = location.state;
+  const { data: chatData, refetch: refetchChatData } = useQuery({
+    queryKey: ['chat', user?.email],
+    queryFn: () => user && getFBChat(user.email, email),
+    staleTime: 1000,
+  });
+  const mutation = useMutation({
+    mutationFn: ({
+      chat,
+      receiveEmail,
+      receiveImage,
+      receiveName,
+      sendEmail,
+      sendImage,
+      sendName,
+      date,
+    }: Chat) =>
+      setFBChat(
+        chat,
+        receiveEmail,
+        receiveName,
+        receiveImage,
+        sendName,
+        sendEmail,
+        sendImage,
+        date,
+      ),
+  });
 
   const {
     handleSubmit,
@@ -18,8 +49,25 @@ const ChatPage = () => {
     mode: 'onChange',
   });
 
+  useEffect(() => {
+    if (mutation.isSuccess) {
+      refetchChatData();
+    }
+  }, [mutation.isSuccess]);
+
   const onSubmit = (data: any) => {
-    console.log(data);
+    if (user) {
+      mutation.mutate({
+        chat: data.chat,
+        receiveEmail: email,
+        receiveName: name,
+        receiveImage: profileImage,
+        sendName: user.dbUser.name,
+        sendEmail: user.email,
+        sendImage: user.dbUser.profileImage,
+        date: Timestamp.fromDate(new Date()),
+      });
+    }
     reset();
   };
 
@@ -40,33 +88,38 @@ const ChatPage = () => {
         <p className="h-14 border-b flex items-center pl-3">{name}</p>
 
         {/** 채팅 내용 */}
-        <div className="h-[calc(100%-112px)] border-b px-2 py-4 flex flex-col gap-2">
-          {/** 다른사람 채팅 */}
-          <div className="flex flex-col items-start">
+        <div className="h-[calc(100%-112px)] border-b px-2 py-4 flex flex-col gap-1 overflow-auto">
+          {/* 프로필 이미지
             <div className="flex items-center gap-2">
               <img src={profileImage} className="rounded-full"></img>
               <p>{name}</p>
             </div>
-            <pre className="w-fit ml-9 py-1 px-2 text-sm bg-gray-200 rounded-md whitespace-pre-wrap font-sans mb-2">
-              <span>
-                hello my name is sujin <br />
-                안녕하세요 내 이름은 이수진이에요
-              </span>
-            </pre>
-            <pre className="w-fit ml-9 py-1 px-2 text-sm bg-gray-200 rounded-md whitespace-pre-wrap font-sans mb-2">
-              <span>hello my name is sujin</span>
-            </pre>
-          </div>
+         */}
 
-          {/** 내 채팅 */}
-          <div className="flex flex-col items-end gap-2">
-            <pre className="w-fit py-1 px-3 text-sm bg-orange-300 rounded-md whitespace-pre-wrap font-sans">
-              <span>hello my name is sujin, too</span>
-            </pre>
-            <pre className="w-fit py-1 px-2 text-sm bg-orange-300 rounded-md whitespace-pre-wrap font-sans">
-              <span>hello</span>
-            </pre>
-          </div>
+          {chatData
+            ?.sort((a, b) => a.date.seconds - b.date.seconds)
+            .map((chat, index) => {
+              /** 다른사람 채팅 */
+              if (chat.sendEmail !== user?.email) {
+                return (
+                  <div key={index} className="flex flex-col items-start">
+                    <pre className="w-fit py-1 px-2 text-sm bg-gray-200 rounded-md whitespace-pre-wrap font-sans mb-2">
+                      <span>{chat.chat}</span>
+                    </pre>
+                  </div>
+                );
+              }
+              /** 내 채팅 */
+              if (chat.sendEmail === user.email) {
+                return (
+                  <div key={index} className="flex flex-col items-end gap-2">
+                    <pre className="w-fit py-1 px-3 text-sm bg-orange-300 rounded-md whitespace-pre-wrap font-sans">
+                      <span>{chat.chat}</span>
+                    </pre>
+                  </div>
+                );
+              }
+            })}
         </div>
 
         {/** 채팅 입력 폼 */}
