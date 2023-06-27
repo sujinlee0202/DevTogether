@@ -6,7 +6,7 @@ import { loginContext } from '../../context/loginContext';
 import Modal from '../Modal';
 
 const Header = () => {
-  const { profileImage } = useContext(loginContext);
+  const { user, profileImage } = useContext(loginContext);
   const [search, setSearch] = useState('');
   const [openModal, setOpenModal] = useState(false);
   const navigate = useNavigate();
@@ -24,7 +24,9 @@ const Header = () => {
   };
 
   const handleMoveChatPage = () => {
-    navigate('/chat');
+    navigate('/chat', {
+      state: user?.dbUser,
+    });
   };
 
   return (

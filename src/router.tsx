@@ -6,6 +6,7 @@ import AddPostPage from './pages/AddPost';
 import Timeline from './components/Timeline';
 import PostDetail from './pages/PostDetail';
 import ChatPage from './pages/ChatPage';
+import Message from './components/Message';
 
 const routerData: RouteObject[] = [
   {
@@ -23,6 +24,12 @@ const routerData: RouteObject[] = [
       {
         path: '/chat',
         element: <ChatPage />,
+        children: [
+          {
+            path: '/chat/message',
+            element: <Message />,
+          },
+        ],
       },
     ],
   },

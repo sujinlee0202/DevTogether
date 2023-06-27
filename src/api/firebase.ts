@@ -150,6 +150,17 @@ export const deleteFBLike = async (postId: string, email: string) => {
   await deleteDoc(doc(db, `post/${postId}/like`, email));
 };
 
+export const setFBChatList = async (
+  sendEmail: string,
+  receiveEmail: string,
+) => {
+  const channelSendRef = collection(db, `chat/${sendEmail}/channel`);
+
+  await setDoc(doc(channelSendRef, receiveEmail), {
+    receiveEmail,
+  });
+};
+
 export const setFBChat = async (
   chat: string,
   receiveEmail: string,
@@ -169,6 +180,14 @@ export const setFBChat = async (
     db,
     `chat/${receiveEmail}/channel/${sendEmail}/message`,
   );
+
+  const channelSendRef = collection(db, `chat/${sendEmail}/channel`);
+
+  await setDoc(doc(channelSendRef, receiveEmail), {
+    receiveEmail,
+    receiveName,
+    receiveImage,
+  });
 
   await setDoc(doc(chatSendRef), {
     chat,
@@ -202,4 +221,17 @@ export const getFBChat = async (sendEmail: string, receiveEmail: string) => {
     chatData.push(doc.data() as Chat);
   });
   return chatData;
+};
+
+export const getFBChatList = async (sendEmail: string) => {
+  const chatListSnap = await getDocs(
+    collection(db, `/chat/${sendEmail}/channel`),
+  );
+  const chatListData: string[] = [];
+
+  chatListSnap.forEach((doc: any) => {
+    chatListData.push(doc.data());
+  });
+
+  return chatListData;
 };
