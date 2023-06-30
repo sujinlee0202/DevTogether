@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useContext } from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import { Post } from '../../types/post';
 import { getUser } from '../../api/firebase';
 import { User } from '../../types/user';
@@ -11,7 +11,7 @@ interface Props {
   post: Post;
 }
 
-const PostCard = ({ post }: Props) => {
+const PostCard = React.forwardRef<HTMLElement, Props>(({ post }, ref) => {
   const [postUser, setPostUser] = useState<User>();
   const [more, setMore] = useState(false);
   const preRef = useRef(null);
@@ -44,7 +44,10 @@ const PostCard = ({ post }: Props) => {
   };
 
   return (
-    <article className="w-full bg-white border flex flex-col p-4 gap-3 mb-10">
+    <article
+      className="w-full bg-white border flex flex-col p-4 gap-3 mb-10"
+      ref={ref}
+    >
       <PostProfile postUser={postUser} date={formattedDate(post.date)} />
       <p className="font-bold text-xl">{post.title}</p>
       <pre className={`relative whitespace-pre-wrap font-sans`} ref={preRef}>
@@ -61,6 +64,6 @@ const PostCard = ({ post }: Props) => {
       <Reaction user={user} post={post} mode="timeline" />
     </article>
   );
-};
+});
 
 export default PostCard;

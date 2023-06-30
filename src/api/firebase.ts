@@ -9,6 +9,10 @@ import {
   getDocs,
   deleteDoc,
   Timestamp,
+  orderBy,
+  limit,
+  query,
+  startAfter,
 } from 'firebase/firestore';
 import { User } from '../types/user';
 import {
@@ -88,12 +92,38 @@ export const setPost = async (post: Post) => {
 };
 
 export const getPost = async () => {
-  const postSnap = await getDocs(collection(db, 'post'));
+  const postQuery = query(collection(db, 'post'), limit(10));
+  const postSnap = await getDocs(postQuery);
+
   const postData: Post[] = [];
   postSnap.forEach((doc) => {
     postData.push(doc.data() as Post);
   });
+
   return postData;
+};
+
+export const first = async () => {
+  const first = query(
+    collection(db, 'post'),
+    orderBy('date', 'desc'),
+    limit(5),
+  );
+
+  const postSnap = await getDocs(first);
+  return postSnap;
+};
+
+export const next = async (pageParam: any) => {
+  const next = query(
+    collection(db, 'post'),
+    orderBy('date', 'desc'),
+    startAfter(pageParam),
+    limit(5),
+  );
+
+  const nextSnap = await getDocs(next);
+  return nextSnap;
 };
 
 export const getFBComment = async (postId: string) => {
