@@ -8,7 +8,7 @@ import PostProfile from '../PostProfile';
 import Reaction from '../Reaction';
 
 interface Props {
-  post: Post;
+  post: any;
 }
 
 const PostCard = React.forwardRef<HTMLElement, Props>(({ post }, ref) => {

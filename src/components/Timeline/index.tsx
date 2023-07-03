@@ -8,14 +8,18 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 const Timeline = () => {
   const { fetchNextPage, hasNextPage, isFetchingNextPage, data } =
     useInfiniteQuery({
-      queryKey: ['posts'],
+      queryKey: ['infinite_posts'],
       queryFn: ({ pageParam }) => {
         return pageParam ? next(pageParam) : first();
       },
-      getNextPageParam: (querySnapshots) => {
-        if (querySnapshots.size < 5) return undefined;
-        else return querySnapshots.docs[querySnapshots.docs.length - 1];
+      getNextPageParam: (querySnapshot) => {
+        const lastPageParam = querySnapshot.docs[querySnapshot.docs.length - 1];
+        if (querySnapshot.size < 5) {
+          return undefined;
+        }
+        return lastPageParam;
       },
+      staleTime: 1000 * 60,
     });
 
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -31,11 +35,9 @@ const Timeline = () => {
       }
 
       observerRef.current = new IntersectionObserver((posts) => {
-        console.log('intersection posts', posts[0].isIntersecting);
         // isIntersecting : target 요소와 상위 요소의 교차 여부를 알려준다.
         // target과 상위요소가 교차됬고 다음 페이지가 존재할 때 fetchNextPage 함수 호출
         if (posts[0].isIntersecting && hasNextPage) {
-          console.log('end page');
           fetchNextPage();
         }
       });
@@ -48,11 +50,15 @@ const Timeline = () => {
     [isFetchingNextPage, fetchNextPage, hasNextPage],
   );
 
+  console.log(
+    data?.pages.flatMap((page) => page.docs.map((doc) => doc.data())),
+  );
+
   return (
     <section className="w-5/6 flex flex-col mx-auto">
       <AddPostBox />
-      {data?.pages[0].docs
-        .map((doc) => doc.data())
+      {data?.pages
+        .flatMap((page) => page.docs.map((doc) => doc.data()))
         .map((post) => (
           <PostCard key={post.postid} post={post} ref={lastPostRef} />
         ))}
