@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef, useContext } from 'react';
-import { Post } from '../../types/post';
 import { getUser } from '../../api/firebase';
 import { User } from '../../types/user';
 import { formattedDate } from '../../utils/formattedDate';

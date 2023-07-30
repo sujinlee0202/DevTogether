@@ -50,10 +50,6 @@ const Timeline = () => {
     [isFetchingNextPage, fetchNextPage, hasNextPage],
   );
 
-  console.log(
-    data?.pages.flatMap((page) => page.docs.map((doc) => doc.data())),
-  );
-
   return (
     <section className="w-5/6 flex flex-col mx-auto">
       <AddPostBox />
